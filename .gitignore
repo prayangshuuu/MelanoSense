@@ -1,0 +1,19 @@
+# MelanoSense Git Ignore
+
+# User uploads
+media/uploads/
+
+# Python defaults
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.env
+
+# Databases
+db.sqlite3
+
+# IDEs
+.idea/
+.vscode/
+.DS_Store
