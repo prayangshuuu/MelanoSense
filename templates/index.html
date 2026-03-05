@@ -468,20 +468,17 @@
                     </div>
                 </div>
 
+                {% if image_base64 %}
                 <div class="comparison-grid">
                     <div class="comparison-card">
-                        <h4>Original Image</h4>
+                        <h4>Uploaded Image</h4>
                         <div class="card comparison-img-wrapper">
-                            <img src="{{ uploaded_image }}" class="comparison-img" alt="Uploaded Image">
-                        </div>
-                    </div>
-                    <div class="comparison-card">
-                        <h4>AI Attention Heatmap (Grad-CAM)</h4>
-                        <div class="card comparison-img-wrapper">
-                            <img src="{{ gradcam_image }}" class="comparison-img" alt="AI Heatmap">
+                            <img src="data:image/jpeg;base64,{{ image_base64 }}" class="comparison-img"
+                                alt="Uploaded Image">
                         </div>
                     </div>
                 </div>
+                {% endif %}
             </section>
             {% endif %}
         </main>
@@ -540,9 +537,6 @@
                     reader.onload = function (e) {
                         imagePreview.src = e.target.result;
                         previewBox.style.display = 'block';
-                        // Hide instructions and icon
-                        dropZone.querySelector('svg').style.display = 'none';
-                        dropZone.querySelectorAll('p').forEach(p => p.classList.add('hidden'));
                         previewBox.classList.remove('hidden');
                     }
                     reader.readAsDataURL(file);
