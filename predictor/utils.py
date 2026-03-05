@@ -60,7 +60,8 @@ def preprocess_image(image):
         if img.mode != 'RGB':
             img = img.convert('RGB')
             
-        img = img.resize((224, 224))
+        # Match the trained CNN input size
+        img = img.resize((128, 128))
         img = np.array(img) / 255.0
         img = np.expand_dims(img, axis=0)
         return img
@@ -74,7 +75,7 @@ def predict_image(image):
     
     try:
         img = preprocess_image(image)
-        prediction = float(cnn_model.predict(img)[0][0])
+        prediction = float(cnn_model.predict(img, verbose=0)[0][0])
         # Ensure prediction is a valid probability
         prediction = max(0.0, min(1.0, prediction))
         return prediction
@@ -129,3 +130,43 @@ def predict_metadata(data):
     except Exception as e:
         logger.error(f"Error predicting metadata: {e}")
         raise RuntimeError(f"Metadata prediction failed: {str(e)}")
+
+
+def hybrid_inference(image, age, sex, localization):
+    """
+    Run the full hybrid inference pipeline:
+    - CNN image pathway
+    - XGBoost metadata pathway
+    - 0.7 * CNN + 0.3 * XGBoost combination
+
+    Returns:
+        prediction_label: "CANCER" or "NON_CANCER"
+        hybrid_prob: float in [0, 1]
+        cnn_prob: float in [0, 1]
+        xgb_prob: float in [0, 1]
+    """
+    if cnn_model is None or meta_model is None:
+        raise RuntimeError(
+            "Prediction models are not fully loaded. Please check server logs."
+        )
+
+    # CNN pathway (uses the uploaded image file-like object)
+    cnn_prob = predict_image(image)
+
+    # XGBoost pathway
+    meta_data = {
+        'age': age,
+        'sex': sex,
+        'localization': localization,
+    }
+    xgb_prob = predict_metadata(meta_data)
+
+    # Hybrid model: 70% CNN, 30% XGBoost
+    hybrid_prob = (0.7 * cnn_prob) + (0.3 * xgb_prob)
+    hybrid_prob = max(0.0, min(1.0, float(hybrid_prob)))
+
+    # Classification threshold at 0.4
+    prediction = 1 if hybrid_prob >= 0.4 else 0
+    prediction_label = "CANCER" if prediction == 1 else "NON_CANCER"
+
+    return prediction_label, hybrid_prob, cnn_prob, xgb_prob

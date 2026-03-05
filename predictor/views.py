@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .forms import PredictionForm
-from .utils import predict_image, predict_metadata
+from .utils import hybrid_inference
 import base64
 import logging
 
@@ -28,21 +28,14 @@ def index(request):
                 # Reset file pointer for PIL processing in utils
                 image_file.seek(0)
                 
-                # Get predictions
-                # CNN Prediction
-                cnn_prob = predict_image(image_file)
-                
-                # Metadata Prediction
-                meta_data = {
-                    'age': age,
-                    'sex': sex,
-                    'localization': localization
-                }
-                meta_prob = predict_metadata(meta_data)
-                
-                # Combine Predictions
-                final_risk = (cnn_prob + meta_prob) / 2
-                percentage = final_risk * 100
+                # Get hybrid prediction (CNN + XGBoost)
+                prediction_label, hybrid_prob, cnn_prob, meta_prob = hybrid_inference(
+                    image_file,
+                    age=age,
+                    sex=sex,
+                    localization=localization,
+                )
+                percentage = hybrid_prob * 100
                 
                 # Interpretation
                 if percentage < 30:
@@ -60,6 +53,8 @@ def index(request):
                     
                 result = {
                     'percentage': f"{percentage:.1f}%",
+                    'prediction': prediction_label,
+                    'confidence': f"{percentage:.2f}%",
                     'risk_level': risk_level,
                     'risk_class': risk_class,
                     'alert_class': alert_class,
