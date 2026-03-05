@@ -45,7 +45,7 @@ class PredictionForm(forms.Form):
     image = forms.ImageField(
         label='Upload Skin Lesion Image',
         required=True,
-        widget=forms.FileInput(attrs={'class': 'form-control'})
+        widget=forms.FileInput(attrs={'class': 'input-control'})
     )
     
     age = forms.IntegerField(
@@ -53,14 +53,14 @@ class PredictionForm(forms.Form):
         required=True,
         min_value=1,
         max_value=120,
-        widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'e.g., 45'})
+        widget=forms.NumberInput(attrs={'class': 'input-control', 'placeholder': 'e.g., 45'})
     )
     
     sex = forms.ChoiceField(
         label='Sex',
         choices=SEX_CHOICES,
         required=True,
-        widget=forms.Select(attrs={'class': 'form-select'})
+        widget=forms.Select(attrs={'class': 'input-control'})
     )
     
     # Choices are populated dynamically from the encoder in __init__
@@ -68,7 +68,7 @@ class PredictionForm(forms.Form):
         label='Lesion Localization',
         choices=(),
         required=True,
-        widget=forms.Select(attrs={'class': 'form-select'})
+        widget=forms.Select(attrs={'class': 'input-control'})
     )
 
     def __init__(self, *args, **kwargs):

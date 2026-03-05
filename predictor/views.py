@@ -6,6 +6,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 def index(request):
     result = None
     image_base64 = None
@@ -20,14 +21,14 @@ def index(request):
                 age = form.cleaned_data['age']
                 sex = form.cleaned_data['sex']
                 localization = form.cleaned_data['localization']
-                
-                # Read image for display
+
+                # Read image for inline display
                 image_data = image_file.read()
                 image_base64 = base64.b64encode(image_data).decode('utf-8')
-                
+
                 # Reset file pointer for PIL processing in utils
                 image_file.seek(0)
-                
+
                 # Get hybrid prediction (CNN + XGBoost)
                 prediction_label, hybrid_prob, cnn_prob, meta_prob = hybrid_inference(
                     image_file,
@@ -70,16 +71,19 @@ def index(request):
                 )
                 # Keep the uploaded image for display even if prediction fails
                 if 'image_file' in locals() and not image_base64:
-                    image_file.seek(0)
-                    image_data = image_file.read()
-                    image_base64 = base64.b64encode(image_data).decode('utf-8')
+                    try:
+                        image_file.seek(0)
+                        image_data = image_file.read()
+                        image_base64 = base64.b64encode(image_data).decode('utf-8')
+                    except Exception:
+                        image_base64 = None
 
     else:
         form = PredictionForm()
     
     return render(request, 'index.html', {
-        'form': form, 
-        'result': result, 
+        'form': form,
+        'result': result,
         'image_base64': image_base64,
-        'error_message': error_message
+        'error_message': error_message,
     })
