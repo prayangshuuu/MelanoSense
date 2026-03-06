@@ -82,6 +82,7 @@ def index(request):
     result = None
     image_base64 = None
     error = None
+    form = PredictionForm()
     scan_id = request.GET.get('id')
     
     # Handle historical scan loading via GET id parameter

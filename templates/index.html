@@ -216,13 +216,9 @@
                         • {{ scan.created_at|date:"F j, Y, P" }}</p>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <a href="{% url 'report_weasyprint' scan.id %}"
-                        class="px-5 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20">
-                        <i class="fas fa-file-pdf"></i> Styled Report
-                    </a>
                     <a href="{% url 'report_reportlab' scan.id %}"
-                        class="px-5 py-2.5 bg-slate-800 text-white rounded-xl font-medium hover:bg-slate-900 transition-all flex items-center gap-2 shadow-lg shadow-slate-500/20">
-                        <i class="fas fa-microscope"></i> Clinical Report
+                        class="px-5 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20">
+                        <i class="fas fa-file-pdf"></i> Clinical Report
                     </a>
                 </div>
             </div>

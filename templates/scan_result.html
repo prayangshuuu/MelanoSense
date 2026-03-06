@@ -90,17 +90,12 @@
                     <i class="fas fa-arrow-left"></i> Back to Dashboard
                 </a>
                 <h1 class="text-3xl font-bold text-slate-900 tracking-tight">AI Diagnostic Report</h1>
-                <p class="text-slate-500">Report ID: <span class="font-mono text-xs uppercase">{{ scan.id }}</span> • {{
-                    scan.created_at|date:"F j, Y, P" }}</p>
+                <p class="text-slate-500">Report ID: <span class="font-mono text-xs uppercase">{{ scan.id }}</span> • {{ scan.created_at|date:"F j, Y, P" }}</p>
             </div>
             <div class="flex flex-wrap gap-3">
-                <a href="{% url 'report_weasyprint' scan.id %}"
-                    class="px-5 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20">
-                    <i class="fas fa-file-pdf"></i> Styled Report
-                </a>
                 <a href="{% url 'report_reportlab' scan.id %}"
-                    class="px-5 py-2.5 bg-slate-800 text-white rounded-xl font-medium hover:bg-slate-900 transition-all flex items-center gap-2 shadow-lg shadow-slate-500/20">
-                    <i class="fas fa-microscope"></i> Clinical Report
+                    class="px-5 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20">
+                    <i class="fas fa-file-pdf"></i> Clinical Report
                 </a>
             </div>
         </header>
@@ -126,8 +121,7 @@
                         <div class="space-y-4">
                             <div class="flex items-center justify-between text-sm">
                                 <span class="text-slate-500 font-medium">Confidence Score</span>
-                                <span class="text-slate-900 font-bold text-lg">{{ scan.confidence|stringformat:".2f"
-                                    }}%</span>
+                                <span class="text-slate-900 font-bold text-lg">{{ scan.confidence|stringformat:".2f" }}%</span>
                             </div>
                             <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
                                 <div class="h-full {% if prediction == 'CANCER' %}bg-red-500{% else %}bg-emerald-500{% endif %} rounded-full transition-all duration-1000"
