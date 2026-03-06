@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section style="padding: 4rem 0;">
+    <div class="container" style="max-width: 900px;">
+        <h1 class="mb-4" style="font-size: 3rem;">Documentation</h1>
+
+        <div class="card mb-4">
+            <h2>About the Project</h2>
+            <p class="mt-2" style="color: var(--text-muted);">MelanoSense is a student-led AI healthcare initiative
+                focused on early melanoma awareness and AI-based pre-screening in Bangladesh. Our mission is to provide
+                an accessible, fast, and reliable decision-support tool for everyone, especially in areas with limited
+                dermatological access.</p>
+        </div>
+
+        <div class="mb-4">
+            <h2 class="mb-3">How the AI Works</h2>
+            <div style="display: grid; gap: 1.5rem;">
+                <div class="card">
+                    <div class="flex gap-2" style="align-items: flex-start;">
+                        <i data-lucide="brain" style="color: var(--primary); width: 32px; height: 32px;"></i>
+                        <div>
+                            <h3>CNN Image Model</h3>
+                            <p class="text-sm" style="color: var(--text-muted);">Our Convolutional Neural Network (CNN)
+                                analyzes
+                                pixel-level details of skin lesions to identify malignant patterns that might be
+                                invisible to the naked eye.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="flex gap-2" style="align-items: flex-start;">
+                        <i data-lucide="database" style="color: var(--primary); width: 32px; height: 32px;"></i>
+                        <div>
+                            <h3>Clinical Metadata Model</h3>
+                            <p class="text-sm" style="color: var(--text-muted);">We integrate clinical factors like age,
+                                sex, and
+                                localization using an XGBoost model, providing a more holistic risk assessment.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="flex gap-2" style="align-items: flex-start;">
+                        <i data-lucide="eye" style="color: var(--primary); width: 32px; height: 32px;"></i>
+                        <div>
+                            <h3>Explainable Heatmaps</h3>
+                            <p class="text-sm" style="color: var(--text-muted);">Using Grad-CAM technology, we generate
+                                heatmaps that
+                                highlight exactly which areas of the image the AI found suspicious.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4" style="border-left: 4px solid var(--danger);">
+            <h3>Intended Use & Limitations</h3>
+            <p class="mt-2" style="color: var(--text-muted);">MelanoSense is designed for **decision support
+                only**. It is NOT a replacement for professional medical diagnosis. The AI's confidence levels are
+                probabilistic and should be reviewed by a qualified doctor.</p>
+        </div>
+
+        <div class="card">
+            <h3>Privacy & Data Protection</h3>
+            <p class="mt-2" style="color: var(--text-muted);">We take user privacy seriously. All uploaded images
+                and clinical data are encrypted and stored securely. We do not share individual data with third parties
+                without explicit consent.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}

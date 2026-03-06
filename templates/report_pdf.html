@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #0f172a;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #0f172a;
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #64748b;
+            margin: 5px 0 0 0;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #0f172a;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .grid {
+            width: 100%;
+        }
+
+        .grid td {
+            padding: 8px 0;
+            vertical-align: top;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #64748b;
+            width: 150px;
+        }
+
+        .value {
+            color: #1e293b;
+        }
+
+        .result-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            font-size: 14px;
+        }
+
+        .recommendation {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .image-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .image-container img {
+            max-width: 300px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 10px;
+            color: #94a3b8;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>MelanoSense AI</h1>
+        <p>Skin Lesion Diagnostic Report</p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Patient & Scan Information</div>
+        <table class="grid">
+            <tr>
+                <td class="label">Report ID:</td>
+                <td class="value">{{ scan.id }}</td>
+            </tr>
+            <tr>
+                <td class="label">Date:</td>
+                <td class="value">{{ scan.created_at|date:"F d, Y H:i" }}</td>
+            </tr>
+            <tr>
+                <td class="label">Patient Age:</td>
+                <td class="value">{{ scan.age }} years</td>
+            </tr>
+            <tr>
+                <td class="label">Patient Sex:</td>
+                <td class="value">{{ scan.sex }}</td>
+            </tr>
+            <tr>
+                <td class="label">Localization:</td>
+                <td class="value">{{ scan.localization }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Diagnostic Analysis</div>
+        <div class="result-box">
+            <table class="grid">
+                <tr>
+                    <td class="label">Analysis Result:</td>
+                    <td class="value"><strong>{{ prediction }}</strong></td>
+                </tr>
+                <tr>
+                    <td class="label">Risk Level:</td>
+                    <td class="value">
+                        <span class="risk-badge" style="background-color: {{ risk.theme_color }};">
+                            {{ risk.risk_display }}
+                        </span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">Neural Confidence:</td>
+                    <td class="value">{{ scan.confidence|stringformat:".2f" }}%</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="recommendation"
+            style="background-color: {% if prediction == 'CANCER' %}#fef2f2{% else %}#f0fdf4{% endif %}; border-left: 4px solid {{ risk.theme_color }};">
+            <strong>Clinical Recommendation:</strong><br>
+            {% if prediction == 'CANCER' %}
+            High Priority: Immediate consultation with a dermatologist and biopsy is strongly recommended for this
+            lesion.
+            {% else %}
+            Observation: Low risk detected. However, please continue periodic self-examination and regular clinical
+            screening.
+            {% endif %}
+        </div>
+    </div>
+
+    {% if image_path %}
+    <div class="section">
+        <div class="section-title">Lesion ROI Image</div>
+        <div class="image-container">
+            <img src="{{ image_path }}" alt="Scan Image">
+            <p style="font-size: 10px; color: #64748b; margin-top: 10px;">Primary region processed by MelanoSense AI
+                models.</p>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="footer">
+        Confidential Medical Report - Generated by MelanoSense AI v1.0<br>
+        This report is for preliminary screening purposes only and does not constitute a definitive medical diagnosis.
+    </div>
+</body>
+
+</html>

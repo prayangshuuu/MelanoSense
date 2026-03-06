@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="dashboard-grid">
+        <aside class="sidebar">
+            <a href="/dashboard" class="sidebar-link">
+                <i data-lucide="layout-dashboard" style="width: 20px;"></i>
+                Dashboard
+            </a>
+            <a href="/scan" class="sidebar-link">
+                <i data-lucide="plus-circle" style="width: 20px;"></i>
+                New Scan
+            </a>
+            <a href="/history" class="sidebar-link active">
+                <i data-lucide="history" style="width: 20px;"></i>
+                Scan History
+            </a>
+            <a href="/documentation" class="sidebar-link">
+                <i data-lucide="book-open" style="width: 20px;"></i>
+                Documentation
+            </a>
+        </aside>
+
+        <section>
+            <div class="flex-between mb-4">
+                <h1>Scan History</h1>
+                <div class="flex gap-1" style="align-items: center;">
+                    <span class="text-sm" style="color: var(--text-muted);">Filter Risk:</span>
+                    <a href="/history" class="btn btn-outline {% if not selected_risk %}active{% endif %}"
+                        style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">All</a>
+                    <a href="/history?risk=High"
+                        class="btn btn-outline {% if selected_risk == 'High' %}active{% endif %}"
+                        style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">High</a>
+                    <a href="/history?risk=Moderate"
+                        class="btn btn-outline {% if selected_risk == 'Moderate' %}active{% endif %}"
+                        style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Moderate</a>
+                    <a href="/history?risk=Low" class="btn btn-outline {% if selected_risk == 'Low' %}active{% endif %}"
+                        style="padding: 0.25rem 0.75rem; font-size: 0.875rem;">Low</a>
+                </div>
+            </div>
+
+            {% if scans %}
+            <div class="card table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Image</th>
+                            <th>Risk Level</th>
+                            <th>Confidence</th>
+                            <th>Location</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for scan in scans %}
+                        <tr>
+                            <td>{{ scan.created_at|date:"M d, Y" }}</td>
+                            <td>
+                                <img src="{{ scan.image.original_file.url }}" alt="Lesion scan"
+                                    style="width: 48px; height: 48px; object-fit: cover; border-radius: 0.25rem; border: 1px solid var(--border);">
+                            </td>
+                            <td>
+                                <span class="badge risk-{{ scan.risk_level|lower|cut:' risk' }} text-xs">
+                                    {{ scan.risk_level }}{% if 'Risk' not in scan.risk_level %} Risk{% endif %}
+                                </span>
+                            </td>
+                            <td>{{ scan.confidence|floatformat:1 }}%</td>
+                            <td class="text-sm" style="color: var(--text-muted);">{{ scan.localization }}</td>
+                            <td>
+                                <a href="/scan/?id={{ scan.id }}" class="font-semibold"
+                                    style="color: var(--primary); text-decoration: none;">View Report</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="card text-center" style="padding: 4rem 2rem;">
+                <i data-lucide="database-zap" class="mb-2"
+                    style="width: 48px; height: 48px; color: var(--text-muted);"></i>
+                <h3>No history found</h3>
+                <p style="color: var(--text-muted);" class="mb-4">No scans match your current filter.</p>
+            </div>
+            {% endif %}
+        </section>
+        </section>
+    </div>
+</div>
+{% endblock %}

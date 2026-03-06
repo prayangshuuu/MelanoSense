@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>MelanoSense AI Diagnostic Report</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 2cm;
+
+            @bottom-right {
+                content: "Page " counter(page) " of " counter(pages);
+                font-size: 9pt;
+                color: #64748b;
+            }
+
+            @bottom-left {
+                content: "Team Minus One • © 2026 MelanoSense";
+                font-size: 9pt;
+                color: #64748b;
+            }
+        }
+
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            color: #1e293b;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #0f172a;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #0f172a;
+            margin: 0;
+            font-size: 24pt;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            color: #64748b;
+            margin: 5px 0 0 0;
+            font-size: 11pt;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #0f172a;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .info-grid {
+            display: table;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .info-row {
+            display: table-row;
+        }
+
+        .info-label {
+            display: table-cell;
+            font-weight: bold;
+            color: #64748b;
+            padding: 5px 0;
+            width: 30%;
+        }
+
+        .info-value {
+            display: table-cell;
+            color: #1e293b;
+            padding: 5px 0;
+        }
+
+        .result-card {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 4pt 12pt;
+            border-radius: 15pt;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
+            font-size: 10pt;
+        }
+
+        .image-grid {
+            display: table;
+            width: 100%;
+            border-spacing: 10pt;
+        }
+
+        .image-item {
+            display: table-cell;
+            width: 33.33%;
+            text-align: center;
+            vertical-align: top;
+        }
+
+        .image-item img {
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .image-caption {
+            font-size: 9pt;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .disclaimer {
+            background-color: #fff7ed;
+            border-left: 4px solid #f97316;
+            padding: 15px;
+            font-size: 10pt;
+            color: #9a3412;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>AI Diagnostic Report : Confidence Score {{ scan.confidence|stringformat:".2f" }}%</h1>
+        <p>Report ID: {{ scan.id }}</p>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Patient & Analysis Metadata</div>
+        <div class="info-grid">
+            <div class="info-row">
+                <div class="info-label">Report ID:</div>
+                <div class="info-value">{{ scan.id }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Date Generated:</div>
+                <div class="info-value">{{ scan.created_at|date:"F d, Y H:i" }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Patient Demographics:</div>
+                <div class="info-value">{{ scan.age }}Y / {{ scan.sex }}</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">Localization:</div>
+                <div class="info-value">{{ scan.localization }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">AI Interpretive Results</div>
+        <div class="result-card">
+            <div class="info-grid">
+                <div class="info-row">
+                    <div class="info-label">Primary Prediction:</div>
+                    <div class="info-value"><strong>{{ prediction }}</strong></div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Risk Classification:</div>
+                    <div class="info-value">
+                        <span class="risk-badge" style="background-color: {{ risk.theme_color }};">
+                            {{ risk.risk_display }}
+                        </span>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Statistical Confidence:</div>
+                    <div class="info-value">{{ scan.confidence|stringformat:".2f" }}%</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Medical Imaging Analysis</div>
+        <div class="image-grid">
+            <div class="image-item">
+                <img src="{{ original_path }}" alt="Original">
+                <div class="image-caption">Original Lesion</div>
+            </div>
+            <div class="image-item">
+                <img src="{{ heatmap_path }}" alt="Heatmap">
+                <div class="image-caption">AI Heatmap Overlay</div>
+            </div>
+            <div class="image-item">
+                <img src="{{ roi_path }}" alt="ROI">
+                <div class="image-caption">Isolated ROI Focus</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="disclaimer">
+        <strong>CLINICAL DISCLAIMER:</strong> This AI-generated report is intended for preliminary screening and
+        educational purposes only. It does NOT constitute a binding medical diagnosis. Clinical findings must be
+        correlated with histopathological results and bedside examination by a board-certified dermatologist.
+    </div>
+</body>
+
+</html>

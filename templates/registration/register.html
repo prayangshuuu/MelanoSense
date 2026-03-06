@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section style="padding: 6rem 0; background-color: #f1f5f9; min-height: calc(100vh - 160px);" class="flex-center">
+    <div class="container" style="max-width: 440px;">
+        <div class="card" style="padding: 2.5rem;">
+            <div class="text-center mb-4">
+                <h1 class="mb-1" style="font-size: 1.75rem;">Create Account</h1>
+                <p style="color: var(--text-muted);">Join MelanoSense for smart health tracking</p>
+            </div>
+
+            <form method="post" action="/register/">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" name="name" required class="form-control" placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" name="email" required class="form-control" placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" name="password" required class="form-control" placeholder="••••••••">
+                </div>
+                <div class="form-group mb-4">
+                    <label class="form-label">Confirm Password</label>
+                    <input type="password" name="confirm_password" required class="form-control" placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.875rem;">Register
+                    Account</button>
+            </form>
+
+            <p class="text-center mt-4 text-sm" style="color: var(--text-muted);">
+                Already have an account? <a href="/login" class="font-semibold"
+                    style="color: var(--primary); text-decoration: none;">Login here</a>
+            </p>
+        </div>
+    </div>
+</section>
+{% endblock %}
