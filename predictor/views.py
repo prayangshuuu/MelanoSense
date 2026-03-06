@@ -85,48 +85,9 @@ def index(request):
     form = PredictionForm()
     scan_id = request.GET.get('id')
     
-    # Handle historical scan loading via GET id parameter
+    # Handle historical scan loading via GET id parameter — redirect to dedicated result page
     if scan_id and request.method == 'GET':
-        try:
-            scan = Scan.objects.get(id=scan_id, user=request.user)
-            risk_meta = get_risk_metadata(scan.confidence)
-            
-            # Ensure heatmap is generated (Sync logic with scan_result)
-            heatmap_url = None
-            try:
-                heatmap_url = generate_gradcam_overlay(
-                    image_path=scan.image.original_file.path,
-                    model=cnn_model,
-                    scan_id=scan.id
-                )
-            except Exception as e:
-                logger.error(f"Lazy heatmap generation failed in index: {e}")
-
-            # Pass variables directly to context for template parity
-            context = {
-                'scan': scan,
-                'risk': risk_meta,
-                'prediction': "CANCER" if scan.confidence >= 40 else "NON-CANCEROUS",
-                'heatmap_url': heatmap_url,
-                'confidence_formatted': f"{scan.confidence:.2f}",
-                'result_view': True # Flag to show result section
-            }
-            if scan.image and scan.image.original_file:
-                with open(scan.image.original_file.path, "rb") as f:
-                    image_base64 = base64.b64encode(f.read()).decode('utf-8')
-            
-            context.update({
-                'form': form,
-                'image_base64': image_base64,
-                'error': error
-            })
-            return render(request, 'index.html', context)
-
-        except Scan.DoesNotExist:
-            error = "Scan report not found."
-        except Exception as e:
-            logger.exception(f"Error loading historical scan: {e}")
-            error = "Could not load the requested scan report."
+        return redirect('scan_result', scan_id=scan_id)
 
     if request.method == 'POST':
         form = PredictionForm(request.POST, request.FILES)
