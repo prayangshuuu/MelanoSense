@@ -131,6 +131,32 @@ def predict_metadata(data):
         logger.error(f"Error predicting metadata: {e}")
         raise RuntimeError(f"Metadata prediction failed: {str(e)}")
 
+def get_risk_metadata(percentage):
+    """
+    Centralized logic for risk level, class, and alert styling.
+    """
+    if percentage < 30:
+        return {
+            'risk_level': "Low Risk",
+            'risk_class': "risk-low",
+            'alert_class': "alert-success",
+            'theme_color': "#059669"
+        }
+    elif percentage < 70:
+        return {
+            'risk_level': "Moderate Risk",
+            'risk_class': "risk-warning",
+            'alert_class': "alert-warning",
+            'theme_color': "#D97706"
+        }
+    else:
+        return {
+            'risk_level': "High Risk",
+            'risk_class': "risk-high",
+            'alert_class': "alert-danger",
+            'theme_color': "#DC2626"
+        }
+
 
 def hybrid_inference(image, age, sex, localization):
     """
@@ -167,6 +193,16 @@ def hybrid_inference(image, age, sex, localization):
 
     # Classification threshold at 0.4
     prediction = 1 if hybrid_prob >= 0.4 else 0
-    prediction_label = "CANCER" if prediction == 1 else "NON_CANCER"
+    prediction_label = "CANCER" if prediction == 1 else "NON-CANCEROUS"
 
-    return prediction_label, hybrid_prob, cnn_prob, xgb_prob
+    # Get dynamic styling and meta data
+    risk_meta = get_risk_metadata(hybrid_prob * 100)
+
+    return {
+        'percentage': f"{hybrid_prob * 100:.1f}",
+        'prediction': prediction_label,
+        'confidence': f"{hybrid_prob * 100:.2f}%",
+        'cnn_prob': f"{cnn_prob * 100:.1f}%",
+        'meta_prob': f"{xgb_prob * 100:.1f}%",
+        **risk_meta
+    }

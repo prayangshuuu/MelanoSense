@@ -17,51 +17,36 @@ def index(request):
         if form.is_valid():
             try:
                 # Get form data
-                image_file = request.FILES['image']
                 age = form.cleaned_data['age']
                 sex = form.cleaned_data['sex']
                 localization = form.cleaned_data['localization']
-
-                # Read image for inline display
-                image_data = image_file.read()
-                image_base64 = base64.b64encode(image_data).decode('utf-8')
-
-                # Reset file pointer for PIL processing in utils
-                image_file.seek(0)
+                
+                # Check for resized image from frontend (base64)
+                image_resized_data = request.POST.get('image_resized')
+                
+                if image_resized_data and 'base64,' in image_resized_data:
+                    # Decode base64 image
+                    format, imgstr = image_resized_data.split(';base64,')
+                    image_data = base64.b64decode(imgstr)
+                    image_base64 = imgstr # Use the one from frontend directly for display
+                    
+                    # Create a file-like object for the models
+                    from io import BytesIO
+                    image_file = BytesIO(image_data)
+                else:
+                    # Fallback to original file
+                    image_file = request.FILES['image']
+                    image_data = image_file.read()
+                    image_base64 = base64.b64encode(image_data).decode('utf-8')
+                    image_file.seek(0)
 
                 # Get hybrid prediction (CNN + XGBoost)
-                prediction_label, hybrid_prob, cnn_prob, meta_prob = hybrid_inference(
+                result = hybrid_inference(
                     image_file,
                     age=age,
                     sex=sex,
                     localization=localization,
                 )
-                percentage = hybrid_prob * 100
-                
-                # Interpretation
-                if percentage < 30:
-                    risk_level = "Low Risk"
-                    risk_class = "text-success"
-                    alert_class = "alert-success"
-                elif percentage < 70:
-                    risk_level = "Moderate Risk"
-                    risk_class = "text-warning"
-                    alert_class = "alert-warning"
-                else:
-                    risk_level = "High Risk"
-                    risk_class = "text-danger"
-                    alert_class = "alert-danger"
-                    
-                result = {
-                    'percentage': f"{percentage:.1f}%",
-                    'prediction': prediction_label,
-                    'confidence': f"{percentage:.2f}%",
-                    'risk_level': risk_level,
-                    'risk_class': risk_class,
-                    'alert_class': alert_class,
-                    'cnn_prob': f"{cnn_prob*100:.1f}%",
-                    'meta_prob': f"{meta_prob*100:.1f}%"
-                }
             except Exception as e:
                 # Log full error for debugging, but show a generic message to the user
                 logger.exception(f"Prediction failed: {e}")
