@@ -89,12 +89,24 @@ def index(request):
         try:
             scan = Scan.objects.get(id=scan_id, user=request.user)
             risk_meta = get_risk_metadata(scan.confidence)
+            
+            # Ensure heatmap is generated (Sync logic with scan_result)
+            heatmap_url = None
+            try:
+                heatmap_url = generate_gradcam_overlay(
+                    image_path=scan.image.original_file.path,
+                    model=cnn_model,
+                    scan_id=scan.id
+                )
+            except Exception as e:
+                logger.error(f"Lazy heatmap generation failed in index: {e}")
+
             result = {
-                'id': str(scan.id),
+                'scan': scan,
+                'risk': risk_meta,
                 'prediction': "CANCER" if scan.confidence >= 40 else "NON-CANCEROUS",
-                'percentage': round(scan.confidence, 1),
-                'confidence': scan.confidence,
-                **risk_meta
+                'heatmap_url': heatmap_url,
+                'confidence_formatted': f"{scan.confidence:.2f}"
             }
             if scan.image and scan.image.original_file:
                 with open(scan.image.original_file.path, "rb") as f:
@@ -224,7 +236,8 @@ def scan_result(request, scan_id):
         'risk': risk_meta,
         'prediction': "CANCER" if scan.confidence >= 40 else "NON-CANCEROUS",
         'heatmap_url': heatmap_url,
-        'user': request.user
+        'user': request.user,
+        'confidence_formatted': f"{scan.confidence:.2f}"
     }
     return render(request, 'scan_result.html', context)
 
