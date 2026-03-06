@@ -206,21 +206,21 @@
             </form>
         </div>
 
-        {% if result %}
+        {% if result_view %}
         <div class="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <!-- Professional Header Alignment -->
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
                 <div>
                     <h2 class="text-3xl font-bold text-slate-900 tracking-tight">AI Diagnostic Report</h2>
-                    <p class="text-slate-500">Report ID: <span class="font-mono text-xs uppercase">{{ result.scan.id
-                            }}</span> • {{ result.scan.created_at|date:"F j, Y, P" }}</p>
+                    <p class="text-slate-500">Report ID: <span class="font-mono text-xs uppercase">{{ scan.id }}</span>
+                        • {{ scan.created_at|date:"F j, Y, P" }}</p>
                 </div>
                 <div class="flex flex-wrap gap-3">
-                    <a href="{% url 'report_weasyprint' result.scan.id %}"
+                    <a href="{% url 'report_weasyprint' scan.id %}"
                         class="px-5 py-2.5 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-all flex items-center gap-2 shadow-lg shadow-blue-500/20">
                         <i class="fas fa-file-pdf"></i> Styled Report
                     </a>
-                    <a href="{% url 'report_reportlab' result.scan.id %}"
+                    <a href="{% url 'report_reportlab' scan.id %}"
                         class="px-5 py-2.5 bg-slate-800 text-white rounded-xl font-medium hover:bg-slate-900 transition-all flex items-center gap-2 shadow-lg shadow-slate-500/20">
                         <i class="fas fa-microscope"></i> Clinical Report
                     </a>
@@ -236,34 +236,34 @@
 
                         <div class="space-y-6">
                             <div
-                                class="text-center p-6 rounded-2xl {% if result.prediction == 'CANCER' %}bg-red-50{% else %}bg-emerald-50{% endif %}">
+                                class="text-center p-6 rounded-2xl {% if prediction == 'CANCER' %}bg-red-50{% else %}bg-emerald-50{% endif %}">
                                 <p class="text-sm text-slate-500 uppercase tracking-widest font-bold mb-1">Primary
                                     Result</p>
                                 <h3
-                                    class="text-3xl font-black {% if result.prediction == 'CANCER' %}text-red-600{% else %}text-emerald-600{% endif %} tracking-tight">
-                                    {{ result.prediction }}
+                                    class="text-3xl font-black {% if prediction == 'CANCER' %}text-red-600{% else %}text-emerald-600{% endif %} tracking-tight">
+                                    {{ prediction }}
                                 </h3>
                             </div>
 
                             <div class="space-y-4">
                                 <div class="flex items-center justify-between text-sm">
                                     <span class="text-slate-500 font-medium">Confidence Score</span>
-                                    <span class="text-slate-900 font-bold text-lg">{{
-                                        result.scan.confidence|stringformat:".2f" }}%</span>
+                                    <span class="text-slate-900 font-bold text-lg">{{ scan.confidence|stringformat:".2f"
+                                        }}%</span>
                                 </div>
                                 <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
-                                    <div class="h-full {% if result.prediction == 'CANCER' %}bg-red-500{% else %}bg-emerald-500{% endif %} rounded-full transition-all duration-1000"
-                                        style="width: {{ result.scan.confidence }}%"></div>
+                                    <div class="h-full {% if prediction == 'CANCER' %}bg-red-500{% else %}bg-emerald-500{% endif %} rounded-full transition-all duration-1000"
+                                        style="width: {{ scan.confidence }}%"></div>
                                 </div>
 
                                 <div class="flex items-center justify-between text-sm pt-2">
                                     <span class="text-slate-500 font-medium">Risk Assessment</span>
-                                    <span class="risk-badge risk-{{ result.scan.risk_level|lower }}">
-                                        {% if result.scan.risk_level == 'Low' %}<i class="fas fa-check-circle"></i>
-                                        {% elif result.scan.risk_level == 'Moderate' %}<i
+                                    <span class="risk-badge risk-{{ scan.risk_level|lower }}">
+                                        {% if scan.risk_level == 'Low' %}<i class="fas fa-check-circle"></i>
+                                        {% elif scan.risk_level == 'Moderate' %}<i
                                             class="fas fa-exclamation-triangle"></i>
                                         {% else %}<i class="fas fa-radiation"></i>{% endif %}
-                                        {{ result.scan.risk_level }} Risk
+                                        {{ scan.risk_level }} Risk
                                     </span>
                                 </div>
                             </div>
@@ -276,16 +276,15 @@
                         <div class="space-y-4">
                             <div class="flex justify-between border-b border-slate-50 pb-2">
                                 <span class="text-slate-500">Patient Age</span>
-                                <span class="font-semibold text-slate-800">{{ result.scan.age }} years</span>
+                                <span class="font-semibold text-slate-800">{{ scan.age }} years</span>
                             </div>
                             <div class="flex justify-between border-b border-slate-50 pb-2">
                                 <span class="text-slate-500">Biological Sex</span>
-                                <span class="font-semibold text-slate-800 capitalize">{{ result.scan.sex }}</span>
+                                <span class="font-semibold text-slate-800 capitalize">{{ scan.sex }}</span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-slate-500">Localization</span>
-                                <span class="font-semibold text-slate-800 capitalize">{{ result.scan.localization
-                                    }}</span>
+                                <span class="font-semibold text-slate-800 capitalize">{{ scan.localization }}</span>
                             </div>
                         </div>
                     </div>
@@ -310,8 +309,8 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <!-- Original Image -->
                             <div class="image-card rounded-2xl glass-card flex flex-col cursor-pointer"
-                                onclick="openModal('{{ result.scan.image.original_file.url }}', 'Original Lesion Image')">
-                                <img src="{{ result.scan.image.original_file.url }}" alt="Original">
+                                onclick="openModal('{{ scan.image.original_file.url }}', 'Original Lesion Image')">
+                                <img src="{{ scan.image.original_file.url }}" alt="Original">
                                 <div class="image-overlay-label">Original Input</div>
                                 <div class="p-4 text-center">
                                     <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Clinical
@@ -321,9 +320,9 @@
 
                             <!-- Heatmap -->
                             <div class="image-card rounded-2xl glass-card flex flex-col cursor-pointer"
-                                onclick="openModal('{% if result.heatmap_url %}{{ result.heatmap_url }}{% endif %}', 'AI Heatmap Overlay')">
-                                {% if result.heatmap_url %}
-                                <img src="{{ result.heatmap_url }}" alt="Heatmap">
+                                onclick="openModal('{% if heatmap_url %}{{ heatmap_url }}{% endif %}', 'AI Heatmap Overlay')">
+                                {% if heatmap_url %}
+                                <img src="{{ heatmap_url }}" alt="Heatmap">
                                 <div class="image-overlay-label">AI Attention Map</div>
                                 {% else %}
                                 <div
@@ -338,9 +337,9 @@
 
                             <!-- ROI -->
                             <div class="image-card rounded-2xl glass-card flex flex-col cursor-pointer"
-                                onclick="openModal('{% if result.scan.roi_image %}{{ result.scan.roi_image.url }}{% endif %}', 'Isolated Lesion ROI')">
-                                {% if result.scan.roi_image %}
-                                <img src="{{ result.scan.roi_image.url }}" alt="ROI">
+                                onclick="openModal('{% if scan.roi_image %}{{ scan.roi_image.url }}{% endif %}', 'Isolated Lesion ROI')">
+                                {% if scan.roi_image %}
+                                <img src="{{ scan.roi_image.url }}" alt="ROI">
                                 <div class="image-overlay-label">Isolated Area Focus</div>
                                 {% else %}
                                 <div

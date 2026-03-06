@@ -101,16 +101,26 @@ def index(request):
             except Exception as e:
                 logger.error(f"Lazy heatmap generation failed in index: {e}")
 
-            result = {
+            # Pass variables directly to context for template parity
+            context = {
                 'scan': scan,
                 'risk': risk_meta,
                 'prediction': "CANCER" if scan.confidence >= 40 else "NON-CANCEROUS",
                 'heatmap_url': heatmap_url,
-                'confidence_formatted': f"{scan.confidence:.2f}"
+                'confidence_formatted': f"{scan.confidence:.2f}",
+                'result_view': True # Flag to show result section
             }
             if scan.image and scan.image.original_file:
                 with open(scan.image.original_file.path, "rb") as f:
                     image_base64 = base64.b64encode(f.read()).decode('utf-8')
+            
+            context.update({
+                'form': form,
+                'image_base64': image_base64,
+                'error': error
+            })
+            return render(request, 'index.html', context)
+
         except Scan.DoesNotExist:
             error = "Scan report not found."
         except Exception as e:
