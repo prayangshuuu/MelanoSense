@@ -11,9 +11,15 @@
 
 ## About
 
-**MelanoSense** is a smart AI screening platform built for early melanoma detection. It provides clinical decision support by analyzing dermoscopic skin lesion images using a hybrid deep learning pipeline, designed as a healthcare initiative to raise melanoma awareness and assist clinical professionals in Bangladesh.
-
-The platform allows users to upload skin lesion images through a professional medical dashboard, run AI-powered analysis, and receive a detailed diagnostic report including risk level, confidence score, Grad-CAM heatmap visualization, and a downloadable clinical PDF report.
+**MelanoSense is an advanced AI-driven screening platform designed to facilitate the early detection of melanoma, one of the most aggressive and life-threatening forms of skin cancer. The system functions as a clinical decision support tool, leveraging a hybrid deep learning pipeline to analyze dermoscopic images of skin lesions and identify patterns associated with malignant melanoma. By integrating artificial intelligence with medical imaging analysis, MelanoSense aims to assist healthcare professionals in performing rapid preliminary assessments of suspicious skin lesions.
+The platform was developed as part of a digital healthcare initiative aimed at improving melanoma awareness and supporting dermatological screening in Bangladesh, where access to specialized dermatological services is often limited, particularly in rural and underserved regions. Through AI-assisted analysis, the system helps bridge the gap between early symptom recognition and timely clinical evaluation.
+MelanoSense features a professional medical dashboard that allows users to securely upload dermoscopic skin lesion images and initiate automated AI-powered diagnostic analysis. The underlying model processes the image through a trained deep learning architecture capable of extracting complex visual features related to asymmetry, border irregularity, color variation, and structural abnormalities commonly associated with melanoma.
+After analysis, the platform generates a comprehensive diagnostic report designed to support clinical interpretation. The report includes:
+Predicted melanoma risk level (low, moderate, or high risk)
+Model confidence score, indicating the reliability of the prediction
+Grad-CAM heatmap visualization, which highlights the specific regions of the lesion image that influenced the model’s decision, enhancing transparency and explainability of the AI system
+A downloadable clinical PDF report, which can be stored, shared, or used as part of patient documentation
+By combining artificial intelligence, medical image analysis, and explainable AI techniques, MelanoSense provides an accessible, efficient, and interpretable tool that can support dermatologists and healthcare professionals in early melanoma risk assessment and screening workflows.
 
 ## Tech Stack & Frameworks
 
